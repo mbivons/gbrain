@@ -8,7 +8,7 @@ services:
     plan: starter # $7/mo, always-on, required for MCP (no spin-down)
     region: oregon # closest to Supabase us-west-2
     branch: render-deploy-v0.22.9
-    healthCheckPath: /mcp
+    healthCheckPath: /health
     autoDeploy: false # safer; manual deploys until stable
     envVars:
       - key: DATABASE_URL

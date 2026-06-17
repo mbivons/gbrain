@@ -19,7 +19,7 @@ EXPOSE 10000
 # Health: gbrain returns 405 on GET /mcp (POST-only endpoint)
 # We use HTTP HEAD /health if it exists; fall back to /mcp
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD wget -q --spider http://localhost:${PORT}/mcp || exit 1
+  CMD wget -q --spider http://localhost:${PORT}/health || exit 1
 
 # Run gbrain serve in HTTP mode
 CMD ["sh", "-c", "exec bun run src/cli.ts serve --http --port ${PORT}"]
