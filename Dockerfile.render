@@ -1,0 +1,25 @@
+# Dockerfile.render — pin gbrain v0.22.9 to Render Starter
+# Single-process: gbrain serve --http on $PORT (Render injects)
+# Connects to Supabase via DATABASE_URL env var
+FROM oven/bun:1.3-debian
+
+WORKDIR /app
+
+# Install dependencies first (cache layer)
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile --production=false
+
+# Copy source
+COPY . .
+
+# Render injects PORT; we bind to it. Default 10000 if running locally.
+ENV PORT=10000
+EXPOSE 10000
+
+# Health: gbrain returns 405 on GET /mcp (POST-only endpoint)
+# We use HTTP HEAD /health if it exists; fall back to /mcp
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD wget -q --spider http://localhost:${PORT}/mcp || exit 1
+
+# Run gbrain serve in HTTP mode
+CMD ["sh", "-c", "exec bun run src/cli.ts serve --http --port ${PORT}"]

@@ -1,0 +1,25 @@
+# Render Blueprint for gbrain v0.22.9 — Matt's deployment
+# Created 2026-06-17 as part of hermes-cloud-migration Phase 2
+services:
+  - type: web
+    name: gbrain
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    plan: starter # $7/mo, always-on, required for MCP (no spin-down)
+    region: oregon # closest to Supabase us-west-2
+    branch: render-deploy-v0.22.9
+    healthCheckPath: /mcp
+    autoDeploy: false # safer; manual deploys until stable
+    envVars:
+      - key: DATABASE_URL
+        sync: false # paste in dashboard from ~/gbrain/.env
+      - key: SUPABASE_PROJECT_REF
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GBRAIN_HTTP_TRUST_PROXY
+        value: "1" # Render is a reverse proxy
